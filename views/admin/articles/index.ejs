@@ -1,0 +1,113 @@
+<div id="admin-content">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-10">
+                  <h1 class="admin-heading"><i class="fa fa-file-text"></i> All Articles</h1>
+              </div>
+              <div class="col-md-2">
+                  <a class="add-new" href="/admin/add-article">Add New Article</a>
+              </div>
+              <div class="col-md-12">
+                  <div id="articlesTable">
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+   <!-- Tabulator JS -->
+<script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.1/dist/js/tabulator.min.js"></script>
+
+<script>
+const tableData = <%- JSON.stringify(articles) %>;
+var table = new Tabulator("#articlesTable", {
+    data: tableData,
+    layout: "fitColumns",
+    pagination: true,
+    paginationSize: 10,
+    paginationSizeSelector: [5, 10, 25, 50, 100],
+    columns: [
+        {title : "S.No", formatter:"rownum", hozAlign:"center", width:100},
+        { title: "Title", field: "title", headerFilter: "input" },
+        { title: "Category", field: "category.name", headerFilter: "input" },
+        { title: "Date", field: "createdAt", headerFilter: "input",
+            formatter: function (cell, formatterParams, onRendered) {
+                const date = new Date(cell.getValue());
+                return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+            }
+        },
+        { title: "Author", field: "author.fullname", headerFilter: "input" },
+        {
+            title: "Actions",
+            formatter: function (cell, formatterParams, onRendered) {
+
+                const id = cell.getData()._id; 
+
+                return `
+                    <a href="/admin/update-article/${id}" class="btn btn-sm btn-success">Edit</a>
+                    <button class="btn btn-sm btn-danger delete-article" onclick="deleteArticle('${id}')">Delete</button>
+                `;
+            }
+        }
+    ]
+});
+
+async function deleteArticle(id) {
+  if (!confirm("Are you sure you want to delete this article?")) return;
+
+  try {
+    const response = await fetch(`/admin/delete-article/${id}`, {
+      method: 'DELETE'
+    });
+
+    const data = await response.json();
+
+   
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    alert(data.message); 
+    location.reload();
+
+  } catch (error) {
+    console.error('Error deleting article:', error);
+    alert("Server error");
+  }
+}
+
+async function deleteCategory(id) {
+  if (!confirm("Are you sure you want to delete this category?")) return;
+
+  try {
+    const response = await fetch(`/admin/delete-category/${id}`, {
+      method: 'DELETE'
+    });
+
+    const data = await response.json();
+
+   
+    if (!response.ok) {
+      alert(data.message); 
+      return;
+    }
+
+    alert(data.message); 
+    location.reload();
+
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    alert("Server error");
+  }
+}
+
+
+
+</script>
+
+ <%- contentFor('tabulatorCSS') %>
+ <!-- Tabulator CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tabulator-tables@6.3.1/dist/css/tabulator.min.css">

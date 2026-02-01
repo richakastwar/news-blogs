@@ -1,0 +1,45 @@
+ <div id="admin-content">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-12">
+                <h1 class="admin-heading"><i class="fa fa-cog"></i> Settings</h1>
+              </div>
+              <div class="col-md-6 mx-auto">
+                  <div class="card">
+                    <h5 class="card-header">Settings</h5>
+                    <div class="card-body">
+                      <form action="/admin/save-settings" method="POST" enctype="multipart/form-data">
+                          <div class="mb-3">
+                              <label for="siteTitle" class="form-label">Website Title</label>
+                              <% if(!settings || !settings.siteTitle || settings.siteTitle.trim() === '') { %>
+                              <input type="text" name="siteTitle" class="form-control" autocomplete="off" required="">
+                              <% } else { %>
+                              <input type="text" name="siteTitle" class="form-control" value="<%= settings.siteTitle %>" autocomplete="off" required="">
+                              <% } %>
+                          </div>
+                         <div class="mb-3">
+                            <label for="siteLogo" class="form-label">Upload Logo</label>
+                          <% if (settings && settings.siteLogo && settings.siteLogo.trim() !== '') { %>
+                         <img src="/uploads/<%= settings.siteLogo %>" alt="Site Logo" style="max-width:150px; display:block; margin-bottom:10px;">
+                         <input type="file" name="siteLogo" class="form-control">
+                        <% } else { %>
+                        <input type="file" name="siteLogo" class="form-control" required>
+                            <% } %>
+                        </div>
+                        <div class="mb-3">
+                            <label for="siteDescription" class="form-label">Footer Description</label>
+                              <% if(!settings || !settings.siteDescription || settings.siteDescription.trim() === '') { %>
+                              <input type="text" name="siteDescription" class="form-control" autocomplete="off" required="">
+                                <% } else { %>
+                              <input type="text" name="siteDescription" class="form-control" value="<%= settings.siteDescription %>" autocomplete="off" required="">
+                                <% } %>
+                          </div>
+                          
+                          <input type="submit" name="submit" class="btn btn-primary" value="Save" required="">
+                      </form>
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
